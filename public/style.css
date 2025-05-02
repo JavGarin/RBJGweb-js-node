@@ -1,0 +1,381 @@
+/* --- Steampunk Theme --- */
+
+/* Variables de Color (opcional, pero útil) */
+:root {
+  --color-background: #f5eadd; /* Pergamino claro / Beige antiguo */
+  --color-container-bg: #6a5a4f; /* Madera oscura / Metal envejecido */
+  --color-text: #3d2c1f; /* Marrón muy oscuro */
+  --color-heading: #a0522d; /* Siena / Marrón rojizo */
+  --color-brass: #b8860b; /* Latón oscuro */
+  --color-copper: #b87333; /* Cobre */
+  --color-border: #8b4513; /* Marrón silla de montar (para bordes) */
+  --color-accent-dark: #5a3d2b; /* Marrón más oscuro para sombras/detalles */
+  --font-heading: 'Cinzel', serif;
+  --font-body: 'EB Garamond', serif;
+}
+
+/* Estilos Generales */
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-background);
+  /* Efecto sutil de textura de papel viejo */
+  background-image: linear-gradient(rgba(210, 180, 140, 0.1) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(210, 180, 140, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px; /* Tamaño del patrón de rejilla sutil */
+  color: var(--color-text);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+  box-sizing: border-box;
+  font-size: 17px; /* Un poco más grande para Garamond */
+}
+
+.container {
+  background-color: var(--color-container-bg);
+  /* Gradiente sutil para simular metal/madera */
+  background-image: linear-gradient(rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.1));
+  padding: 35px 45px;
+  border-radius: 8px; /* Bordes menos redondeados */
+  border: 3px solid var(--color-border);
+  border-style: outset; /* Efecto de borde biselado */
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4), /* Sombra principal más oscura */
+              inset 0 0 15px rgba(0, 0, 0, 0.3); /* Sombra interior */
+  max-width: 750px;
+  width: 100%;
+  text-align: center;
+  transition: all 0.3s ease;
+  color: var(--color-background); /* Texto claro sobre fondo oscuro */
+}
+
+header h1 {
+  font-family: var(--font-heading);
+  color: var(--color-brass); /* Título en latón */
+  font-weight: 700;
+  margin-bottom: 15px;
+  text-shadow: 1px 1px 3px var(--color-accent-dark);
+  letter-spacing: 1px;
+}
+
+header p {
+  color: #dcdcdc; /* Gris claro para subtítulo */
+  margin-bottom: 35px;
+  font-size: 1.2em;
+  font-style: italic;
+}
+
+/* --- Área de Carga --- */
+.upload-area {
+  margin-bottom: 35px;
+}
+
+.drop-zone {
+  border: 3px dashed var(--color-copper); /* Borde cobre punteado */
+  border-radius: 6px;
+  padding: 40px 20px;
+  cursor: pointer;
+  transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: rgba(0, 0, 0, 0.1); /* Fondo ligeramente oscuro */
+}
+
+.drop-zone.dragover {
+  border-color: var(--color-brass);
+  border-style: solid;
+  background-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 15px var(--color-brass); /* Resplandor latón */
+}
+
+.upload-icon i.fas { /* Asegurarse de que aplica a los iconos Font Awesome */
+  font-size: 4.5em;
+  color: var(--color-copper); /* Icono en cobre */
+  margin-bottom: 15px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.drop-zone p {
+  margin: 12px 0;
+  color: #e0e0e0; /* Texto claro */
+}
+
+.formats-info {
+  font-size: 0.95em;
+  color: var(--color-brass); /* Información en latón */
+  margin-top: 15px;
+  font-weight: 500;
+}
+
+/* --- Botones --- */
+.btn {
+  font-family: var(--font-heading); /* Fuente de título para botones */
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  color: var(--color-background); /* Texto claro */
+  border: 2px solid var(--color-border);
+  border-style: outset;
+  padding: 12px 28px;
+  border-radius: 4px; /* Bordes más definidos */
+  cursor: pointer;
+  font-size: 1.05em;
+  transition: all 0.2s ease;
+  margin: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  position: relative; /* Para pseudo-elementos si se necesitan */
+  overflow: hidden; /* Para efectos */
+}
+
+.btn i.fas { /* Color de iconos en botones */
+  color: var(--color-brass);
+  font-size: 1.1em;
+}
+
+/* Botón normal/seleccionar archivo */
+.btn {
+  background-color: var(--color-copper); /* Fondo cobre */
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+}
+.btn:hover {
+  background-color: #a0662d; /* Cobre más oscuro */
+  border-color: #a0522d;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4), 0 0 10px var(--color-copper); /* Resplandor */
+  transform: translateY(-1px); /* Ligero levantamiento */
+}
+
+/* Botón Primario (Quitar Fondo) */
+.btn.primary {
+  background-color: var(--color-brass); /* Latón */
+  border-color: #a0740a;
+}
+.btn.primary:hover {
+  background-color: #caa632; /* Latón más brillante */
+  border-color: #b8860b;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4), 0 0 12px var(--color-brass);
+}
+.btn.primary i.fas {
+  color: #fff; /* Icono blanco en botón primario */
+}
+
+/* Botón Secundario (Descargar, Nueva Imagen) */
+.btn.secondary {
+  background-color: var(--color-accent-dark); /* Marrón oscuro */
+  border-color: #4a3c31;
+}
+.btn.secondary:hover {
+  background-color: #7c6453;
+  border-color: #5a3d2b;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5), 0 0 8px var(--color-accent-dark);
+}
+
+.btn:active {
+  transform: translateY(1px); /* Efecto de presionado */
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+.btn:disabled {
+  background-color: #888; /* Gris metalizado opaco */
+  border-color: #666;
+  color: #bbb;
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.4);
+  text-shadow: none;
+}
+.btn:disabled i.fas {
+  color: #bbb;
+}
+
+
+/* --- Área de Previsualización --- */
+.preview-area {
+  margin-top: 35px;
+}
+
+.image-container {
+  margin-bottom: 30px;
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.2); /* Fondo oscuro semitransparente */
+  /* Patrón sutil de rejilla (como plano) */
+  background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 25px 25px;
+  padding: 15px;
+  border: 2px solid var(--color-border);
+  border-radius: 4px;
+  min-height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.4);
+}
+
+.image-container img {
+  max-width: 100%;
+  max-height: 450px;
+  display: block;
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil a la imagen */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.image-info {
+  font-size: 0.9em;
+  color: var(--color-brass); /* Info en latón */
+  margin-top: 20px;
+  font-style: italic;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* Más espacio entre controles */
+  margin-bottom: 25px;
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.format-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.format-selector label {
+  color: var(--color-brass); /* Etiqueta en latón */
+  font-weight: 500;
+  font-family: var(--font-heading);
+}
+
+.format-selector select {
+  font-family: var(--font-body);
+  background-color: var(--color-background); /* Fondo pergamino */
+  color: var(--color-text); /* Texto oscuro */
+  border: 2px solid var(--color-border);
+  border-style: inset;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 0.95em;
+  cursor: pointer;
+  appearance: none; /* Quitar estilo por defecto */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23B8860B%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); /* Flecha color latón */
+  background-repeat: no-repeat;
+  background-position: right 10px top 50%;
+  background-size: 12px auto;
+  padding-right: 30px; /* Espacio para la flecha */
+}
+.format-selector select:focus {
+  outline: 2px solid var(--color-brass);
+  outline-offset: 2px;
+}
+
+/* --- Indicador de Carga --- */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  /* Fondo semi-transparente para superponer */
+  /* background-color: rgba(40, 30, 20, 0.8); */
+  border-radius: 8px;
+  margin-top: 20px;
+  transition: opacity 0.3s ease;
+}
+
+.spinner {
+  border: 5px solid rgba(184, 134, 11, 0.3); /* Latón transparente */
+  border-top: 5px solid var(--color-brass); /* Latón sólido */
+  border-radius: 50%;
+  width: 50px; /* Más grande */
+  height: 50px;
+  animation: spin 1.2s linear infinite;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(184, 134, 11, 0.5); /* Resplandor latón */
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading p {
+  margin: 5px 0 0;
+  color: var(--color-brass); /* Texto latón */
+  font-weight: 500;
+  font-size: 1.1em;
+  font-family: var(--font-heading);
+}
+
+.loading .loading-info {
+  font-size: 0.9em;
+  color: #ccc; /* Gris claro */
+  font-family: var(--font-body);
+  font-style: italic;
+}
+
+/* --- Mensajes de Éxito y Error --- */
+.message {
+  padding: 18px 25px;
+  border-radius: 6px;
+  margin-top: 25px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border: 2px solid; /* Borde definido abajo */
+  border-style: double; /* Borde doble */
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3), inset 0 0 8px rgba(0,0,0,0.2);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  position: relative;
+  color: var(--color-text); /* Texto oscuro por defecto */
+  font-family: var(--font-body);
+}
+
+.message-icon i.fas {
+  font-size: 2em;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+}
+
+.message p {
+  margin: 0;
+  flex-grow: 1;
+  text-align: left;
+  font-size: 1.05em;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.8em;
+  color: inherit; /* Hereda color (cobre/latón abajo) */
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  padding: 0 8px;
+  font-weight: bold;
+  line-height: 1; /* Alinear mejor la X */
+}
+.btn-close:hover {
+  opacity: 1;
+}
+
+.success-message {
+  background-color: #d4eedc; /* Fondo verde pálido (pergamino verdoso) */
+  border-color: #5b8d5a; /* Verde oscuro musgo */
+  color: #2e4d2e;
+}
+.success-message .message-icon i.fas { color: #5b8d5a; }
+.success-message .btn-close { color: #5b8d5a; }
+
+.error-message {
+  background-color: #f8d8da; /* Fondo rojo pálido (pergamino rojizo) */
+  border-color: #8b0000; /* Rojo oscuro (maroon) */
+  color: #5a1a1f;
+}
+.error-message .message-icon i.fas { color: #8b0000; }
+.error-message .btn-close { color: #8b0000; }

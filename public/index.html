@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Quitar Fondo de Imagen - Steampunk Edition</title>
+        <link rel="stylesheet" href="style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=EB+Garamond:wght@400;500&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    </head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quitar Fondo de Imagen</h1>
+            <p>Sube tu imagen y elimina el fondo fácilmente.</p>
+        </header>
+
+        <div class="upload-area" id="uploadArea">
+            <input type="file" id="fileInput" accept="image/jpeg, image/png, image/webp" style="display: none;">
+            <div class="drop-zone" id="dropZone">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <p>Arrastra y suelta tu imagen aquí</p>
+                <p>o</p>
+                <button type="button" class="btn" id="selectBtn">Seleccionar archivo</button>
+                <p class="formats-info">Formatos: JPG, PNG, WEBP (Máx. 5MB)</p>
+            </div>
+        </div>
+
+        <div class="preview-area" id="previewArea" style="display: none;">
+            <div class="image-container">
+                <img id="previewImage" src="#" alt="Vista previa de la imagen">
+                <img id="resultImage" src="#" alt="Resultado (fondo eliminado)" style="display: none;">
+                 </div>
+            <div class="controls">
+                <div class="format-selector">
+                    <label for="formatSelect">Descargar como:</label>
+                    <select id="formatSelect">
+                        <option value="png">PNG (Recomendado)</option>
+                        <option value="jpeg">JPEG</option>
+                        <option value="webp">WEBP</option>
+                    </select>
+                </div>
+                <button type="button" class="btn primary" id="removeBgBtn">
+                    <i class="fas fa-magic"></i> Quitar fondo
+                </button>
+                <button type="button" class="btn secondary" id="downloadBtn" disabled>
+                    <i class="fas fa-download"></i> Descargar
+                </button>
+                <button type="button" class="btn secondary" id="resetBtn">
+                    <i class="fas fa-redo"></i> Nueva imagen
+                </button>
+            </div>
+             <p id="imageInfo" class="image-info"></p> </div>
+
+        <div class="loading" id="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Procesando imagen...</p>
+            <p class="loading-info">Esto puede tardar unos segundos.</p>
+        </div>
+
+        <div class="message success-message" id="successMessage" style="display: none;">
+            <div class="message-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <p>¡Imagen procesada! Lista para descargar.</p>
+            <button type="button" class="btn-close" id="successCloseBtn">&times;</button>
+        </div>
+
+        <div class="message error-message" id="errorMessage" style="display: none;">
+            <div class="message-icon">
+                 <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <p id="errorText">Ocurrió un error.</p>
+             <button type="button" class="btn-close" id="errorCloseBtn">&times;</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
