@@ -1,13 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Elementos del DOM ---
-    const uploadArea = document.getElementById('uploadArea');
-    const dropZone = document.getElementById('dropZone');
+    // Corregido el nombre de la variable para coincidir con el ID en HTML
+    const uploadBox = document.getElementById('upload-box'); // Cambiado de uploadArea a uploadBox
+    // Corregido el nombre de la variable para coincidir con la clase/ID en HTML/CSS
+    const dropArea = document.getElementById('dropArea'); // Cambiado de dropZone a dropArea
     const fileInput = document.getElementById('fileInput');
     const selectBtn = document.getElementById('selectBtn');
 
     const previewArea = document.getElementById('previewArea');
     const previewImage = document.getElementById('previewImage');
-    // const resultImage = document.getElementById('resultImage'); // Opcional si quieres mostrar ambas
+    // Agregada la query para el nuevo párrafo imageInfo
     const imageInfo = document.getElementById('imageInfo');
     const formatSelect = document.getElementById('formatSelect');
     const removeBgBtn = document.getElementById('removeBgBtn');
@@ -21,48 +23,58 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorText = document.getElementById('errorText');
     const errorCloseBtn = document.getElementById('errorCloseBtn');
 
+    // --- Elementos del Canvas de Nieve ---
+    const snowCanvas = document.getElementById("snow-canvas");
+    const ctx = snowCanvas?.getContext("2d"); // Usar optional chaining por seguridad
+
     // --- Estado ---
     let originalFile = null;
-    let processedBlob = null; // Almacenará el resultado como Blob
-    let processedBlobUrl = null; // URL para la imagen procesada
+    let processedBlob = null;
+    let processedBlobUrl = null;
 
-    // --- Funciones ---
+    // --- Utilidades de UI ---
+    // Usar add/remove la clase .hidden en lugar de style.display
+    const showElement = el => el?.classList.remove('hidden'); // Usar optional chaining
+    const hideElement = el => el?.classList.add('hidden');   // Usar optional chaining
 
-    // Mostrar/Ocultar Elementos
-    const showElement = (el) => { el.style.display = 'flex'; }; // Usar flex para mensajes
-    const hideElement = (el) => { el.style.display = 'none'; };
-
-    // Mostrar Mensajes
-    const showLoading = () => { hideMessages(); showElement(loading); disableButtons(); };
-    const hideLoading = () => hideElement(loading);
-    const showSuccess = () => { hideMessages(); showElement(successMessage); };
-    const showError = (message) => {
-        hideMessages();
-        errorText.textContent = message || 'Ocurrió un error inesperado.';
-        showElement(errorMessage);
-        enableButtons(); // Habilitar botones para que pueda intentar de nuevo o resetear
-    };
     const hideMessages = () => {
         hideElement(successMessage);
         hideElement(errorMessage);
-        hideElement(loading); // También ocultar carga por si acaso
+        hideElement(loading); // También ocultar el loading al ocultar mensajes
     };
 
-    // Habilitar/Deshabilitar Botones
+    const showLoading = () => {
+        hideMessages();
+        showElement(loading);
+        disableButtons();
+    };
+
+    const showSuccess = () => {
+        hideMessages();
+        showElement(successMessage);
+    };
+
+    const showError = (message = 'Ocurrió un error inesperado.') => {
+        hideMessages();
+        if (errorText) errorText.textContent = message; // Verificar si errorText existe
+        showElement(errorMessage);
+        enableButtons(false); // Deshabilitar descargar si hay error
+    };
+
     const disableButtons = () => {
-        removeBgBtn.disabled = true;
-        downloadBtn.disabled = true;
-        resetBtn.disabled = true; // Deshabilitar mientras procesa
-        formatSelect.disabled = true;
-    };
-    const enableButtons = (processed = false) => {
-        removeBgBtn.disabled = false;
-        downloadBtn.disabled = !processed; // Solo habilitar si hay resultado
-        resetBtn.disabled = false;
-        formatSelect.disabled = false;
+        [removeBgBtn, downloadBtn, resetBtn, formatSelect].forEach(el => {
+            if (el) el.disabled = true; // Verificar si el elemento existe
+        });
     };
 
-    // Limpiar Estado y UI
+    const enableButtons = (hasProcessed = false) => {
+        // Solo habilitar si los elementos existen
+        if (removeBgBtn) removeBgBtn.disabled = false;
+        if (downloadBtn) downloadBtn.disabled = !hasProcessed;
+        if (resetBtn) resetBtn.disabled = false;
+        if (formatSelect) formatSelect.disabled = false;
+    };
+
     const resetApp = () => {
         originalFile = null;
         if (processedBlobUrl) {
@@ -71,215 +83,272 @@ document.addEventListener('DOMContentLoaded', () => {
         processedBlob = null;
         processedBlobUrl = null;
 
-        fileInput.value = ''; // Resetear input de archivo
-        previewImage.src = '#'; // Limpiar preview
-        imageInfo.textContent = '';
-        hideElement(previewArea);
-        hideMessages();
-        showElement(uploadArea);
-        enableButtons(false); // Deshabilitar descarga
+        if (fileInput) fileInput.value = ''; // Limpiar el input de archivo
+        if (previewImage) previewImage.removeAttribute('src'); // Quitar la imagen de vista previa
+        if (imageInfo) imageInfo.textContent = ''; // Limpiar la información del archivo
+
+        hideMessages(); // Ocultar cualquier mensaje o loading
+        hideElement(previewArea); // Ocultar el área de vista previa
+        showElement(uploadBox); // Mostrar el área de carga (corregido uploadArea a uploadBox)
+
+        disableButtons(); // Deshabilitar botones al inicio
+
+        // Reiniciar la animación de nieve (si existe el canvas)
+        if (snowCanvas) {
+             resizeCanvas(); // Re-inicializa y dibuja los copos
+        }
     };
 
-    // Manejar Selección de Archivo
     const handleFileSelect = (file) => {
         if (!file) return;
 
-        // Validación básica (tipo y tamaño)
         const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-        const maxSize = 5 * 1024 * 1024; // 5MB
+        const maxSize = 5 * 1024 * 1024; // 5 MB
 
         if (!allowedTypes.includes(file.type)) {
             showError(`Formato no soportado (${file.type}). Usa JPG, PNG o WEBP.`);
-            resetApp();
+            resetApp(); // Resetear la app si hay un error de formato
             return;
         }
+
         if (file.size > maxSize) {
             showError(`Archivo demasiado grande (${(file.size / 1024 / 1024).toFixed(1)}MB). Máximo 5MB.`);
-            resetApp();
+            resetApp(); // Resetear la app si hay un error de tamaño
             return;
         }
 
         originalFile = file;
-        hideMessages();
-        hideElement(uploadArea);
-        showElement(previewArea);
 
-        // Mostrar preview de la imagen original
         const reader = new FileReader();
-        reader.onload = (e) => {
-            previewImage.src = e.target.result;
-            imageInfo.textContent = `Original: ${originalFile.name} (${(originalFile.size / 1024).toFixed(1)} KB)`;
+        reader.onload = e => {
+            if (previewImage) {
+                 previewImage.src = e.target.result;
+                 // No necesitas una clase 'loaded' si la opacidad es 1 por defecto en CSS
+            }
+            if (imageInfo) {
+                imageInfo.textContent = `Original: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+            }
         };
-        reader.readAsDataURL(originalFile);
+        reader.onerror = () => {
+            showError('Error al leer el archivo.');
+            resetApp(); // Resetear si falla la lectura
+        };
+        reader.readAsDataURL(file);
 
-        enableButtons(false); // Habilitar "Quitar fondo", deshabilitar "Descargar"
+        hideMessages(); // Ocultar mensajes antes de mostrar la vista previa
+        hideElement(uploadBox); // Ocultar el área de carga (corregido)
+        showElement(previewArea); // Mostrar el área de vista previa
+
+        enableButtons(false); // Habilitar quitar fondo y reset, deshabilitar descargar
     };
 
-    // Procesar Imagen (Llamada a la API)
     const processImage = async () => {
-        if (!originalFile) return;
+        if (!originalFile) {
+            showError('No hay imagen seleccionada para procesar.');
+            return;
+        }
 
         showLoading();
 
         const formData = new FormData();
         formData.append('image', originalFile);
-        formData.append('outputFormat', formatSelect.value); // Enviar formato seleccionado
+        // Asegurarse de enviar el formato seleccionado
+        if (formatSelect) {
+            formData.append('outputFormat', formatSelect.value);
+        } else {
+             formData.append('outputFormat', 'png'); // Valor por defecto si no hay select
+        }
+
 
         try {
+            // Usar la ruta relativa a tu servidor local o al path de tu API en el deploy
             const response = await fetch('/api/remove-background', {
                 method: 'POST',
                 body: formData,
-                // No es necesario 'Content-Type': 'multipart/form-data', el navegador lo hace por FormData
+                // headers: { 'Content-Type': '...' } - No es necesario con FormData, el navegador lo pone
             });
 
             if (!response.ok) {
-                // Intentar leer el error del JSON si el servidor lo envió así
-                let errorMsg = `Error del servidor: ${response.status} ${response.statusText}`;
-                try {
+                const contentType = response.headers.get("content-type") || "";
+                let errorMsg = `Error del servidor: ${response.status}`;
+
+                if (contentType.includes("application/json")) {
                     const errorData = await response.json();
-                    if (errorData && errorData.error) {
-                        errorMsg = errorData.error;
-                    } else if (response.headers.get("content-type")?.includes("text")) {
-                        // Si es texto plano, leerlo
-                         errorMsg = await response.text();
-                    }
-                } catch (e) {
-                    // Si no se pudo parsear el JSON, usar el statusText
-                     console.warn("No se pudo parsear respuesta de error como JSON");
-                     // Leer como texto si es posible
-                     if (response.headers.get("content-type")?.includes("text")) {
-                        errorMsg = await response.text();
-                     }
+                    errorMsg = errorData.error || errorData.details || errorMsg; // Capturar error o details del backend
+                } else if (contentType.includes("text")) {
+                    errorMsg = await response.text();
                 }
-                 throw new Error(errorMsg);
+
+                // Lanzar un error con el mensaje obtenido del backend
+                throw new Error(errorMsg);
             }
 
-            // Obtener resultado como Blob
             processedBlob = await response.blob();
 
-            // Crear URL para mostrar la imagen procesada
+            // Liberar el URL anterior antes de crear uno nuevo
             if (processedBlobUrl) {
-                URL.revokeObjectURL(processedBlobUrl); // Liberar la URL anterior si existe
+                 URL.revokeObjectURL(processedBlobUrl);
             }
             processedBlobUrl = URL.createObjectURL(processedBlob);
 
-            // Mostrar la imagen procesada (reemplazando la original o en otro img)
-            previewImage.src = processedBlobUrl; // Actualiza la imagen de preview
-            imageInfo.textContent += ` | Procesada (${(processedBlob.size / 1024).toFixed(1)} KB)`;
+            if (previewImage) {
+                 previewImage.src = processedBlobUrl; // Mostrar la imagen procesada
+            }
+            if (imageInfo) {
+                 imageInfo.textContent += ` | Procesada (${(processedBlob.size / 1024).toFixed(1)} KB, ${processedBlob.type})`; // Añadir info del resultado
+            }
 
-            hideLoading();
             showSuccess();
             enableButtons(true); // Habilitar descarga
 
         } catch (error) {
             console.error('Error al procesar imagen:', error);
-            hideLoading();
-            showError(error.message || 'Error de conexión o al procesar la imagen.');
-            enableButtons(false); // Habilitar botones principales, no descarga
+            showError(error.message || 'Error desconocido al procesar la imagen.'); // Mostrar mensaje de error al usuario
+            // No resetApp() aquí, para que el usuario vea la imagen original y el error
+            enableButtons(false); // Asegurar que la descarga esté deshabilitada
+            if (resetBtn) resetBtn.disabled = false; // Pero permitir reset
+        } finally {
+            hideElement(loading); // Ocultar loading siempre al finalizar
         }
     };
 
-    // Descargar Imagen Procesada
     const downloadImage = () => {
-        if (!processedBlobUrl || !processedBlob) return;
+        if (!processedBlob || !processedBlobUrl) {
+            console.warn('No hay imagen procesada para descargar.');
+            return;
+        }
 
         const link = document.createElement('a');
+        // Usar el nombre del archivo original sin extensión y añadir la extensión según el formato
+        const name = originalFile?.name.replace(/\.[^/.]+$/, '') || 'processed_image';
+        // La extensión debe coincidir con el mime type del blob
+        let fileExtension = 'png'; // Por defecto
+        if (processedBlob.type === 'image/jpeg') fileExtension = 'jpg';
+        else if (processedBlob.type === 'image/webp') fileExtension = 'webp';
+
+
         link.href = processedBlobUrl;
-
-        // Crear nombre de archivo
-        const originalName = originalFile.name.split('.').slice(0, -1).join('.');
-        const extension = formatSelect.value === 'jpeg' ? 'jpg' : formatSelect.value; // Usar jpg para jpeg
-        link.download = `${originalName}_no_bg.${extension}`;
-
-        document.body.appendChild(link); // Necesario para Firefox
+        link.download = `${name}_nobg.${fileExtension}`; // Nombre del archivo
+        document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     };
 
 
-    // --- Event Listeners ---
+    // --- Eventos ---
+    // Verificar que los elementos existan antes de añadir listeners
+    if (selectBtn) {
+        selectBtn.addEventListener('click', () => fileInput?.click()); // Usar optional chaining
+    }
+    if (fileInput) {
+        fileInput.addEventListener('change', e => handleFileSelect(e.target.files?.[0])); // Usar optional chaining
+    }
 
-    // Clic en botón "Seleccionar archivo"
-    selectBtn.addEventListener('click', () => fileInput.click());
-
-    // Selección de archivo a través del input
-    fileInput.addEventListener('change', (e) => handleFileSelect(e.target.files[0]));
-
-    // Arrastrar y Soltar (Drag and Drop)
-    dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault(); // Necesario para permitir 'drop'
-        dropZone.classList.add('dragover');
-    });
-    dropZone.addEventListener('dragleave', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('dragover');
-    });
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('dragover');
-        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-            handleFileSelect(e.dataTransfer.files[0]);
-        }
-    });
-    // Click en el drop zone también abre el selector de archivos
-    dropZone.addEventListener('click', (e) => {
-         // Evitar que el click en el botón dentro del dropzone lo active dos veces
-         if (e.target !== selectBtn && !selectBtn.contains(e.target)) {
-              fileInput.click();
-         }
-    });
+    if (dropArea) { // Corregido dropZone a dropArea
+        dropArea.addEventListener('dragover', e => {
+            e.preventDefault();
+            dropArea.classList.add('dragover');
+        });
+        dropArea.addEventListener('dragleave', e => {
+            e.preventDefault();
+            dropArea.classList.remove('dragover');
+        });
+        dropArea.addEventListener('drop', e => {
+            e.preventDefault();
+            dropArea.classList.remove('dragover');
+            const file = e.dataTransfer?.files?.[0]; // Usar optional chaining
+            if (file) handleFileSelect(file);
+        });
+        // Eliminar este listener si no quieres que todo el drop area sea clickeable
+        // Si lo mantienes, asegúrate de que no interfiera con selectBtn
+         dropArea.addEventListener('click', e => {
+             // Solo abrir el selector de archivo si el click NO fue en el botón "Seleccionar archivo"
+             if (selectBtn && !selectBtn.contains(e.target)) {
+                 fileInput?.click(); // Usar optional chaining
+             }
+         });
+    }
 
 
-    // Clic en "Quitar fondo"
-    removeBgBtn.addEventListener('click', processImage);
-
-    // Clic en "Descargar"
-    downloadBtn.addEventListener('click', downloadImage);
-
-    // Clic en "Nueva imagen" (Reset)
-    resetBtn.addEventListener('click', resetApp);
+    if (removeBgBtn) removeBgBtn.addEventListener('click', processImage);
+    if (downloadBtn) downloadBtn.addEventListener('click', downloadImage);
+    if (resetBtn) resetBtn.addEventListener('click', resetApp);
 
     // Cerrar mensajes
-    successCloseBtn.addEventListener('click', hideMessages);
-    errorCloseBtn.addEventListener('click', hideMessages);
+    if (successCloseBtn) successCloseBtn.addEventListener('click', hideMessages);
+    if (errorCloseBtn) errorCloseBtn.addEventListener('click', hideMessages);
+
+
+    // --- Configuración de Partículas de Nieve (Integrada) ---
+    let flakes = [];
+    const flakeCount = 100; // Número de copos
+
+    function initFlakes() {
+        if (!snowCanvas || !ctx) return; // Asegurar que el canvas existe
+        flakes = [];
+        for (let i = 0; i < flakeCount; i++) {
+            flakes.push({
+                x: Math.random() * snowCanvas.width,
+                y: Math.random() * snowCanvas.height,
+                radius: Math.random() * 3 + 2, // Tamaño entre 2 y 5
+                speedY: Math.random() * 1 + 0.5, // Velocidad de caída entre 0.5 y 1.5
+                speedX: Math.random() * 1 - 0.5, // Movimiento horizontal entre -0.5 y 0.5
+            });
+        }
+    }
+
+    function drawFlakes() {
+        if (!snowCanvas || !ctx) return; // Asegurar que el canvas y contexto existen
+
+        ctx.clearRect(0, 0, snowCanvas.width, snowCanvas.height); // Limpiar el canvas
+
+        for (let flake of flakes) {
+            ctx.beginPath();
+            ctx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.8)"; // Copos ligeramente transparentes
+            ctx.fill();
+
+            // Movimiento
+            flake.y += flake.speedY;
+            flake.x += flake.speedX;
+
+            // Reaparecer arriba si sale por abajo o por los lados
+            if (flake.y > snowCanvas.height) {
+                flake.y = -flake.radius; // Reaparecer justo encima del canvas
+                flake.x = Math.random() * snowCanvas.width; // Posición horizontal aleatoria
+            }
+            // Reaparecer en el lado opuesto si sale por los lados (efecto wrap-around)
+             if (flake.x < -flake.radius) {
+                 flake.x = snowCanvas.width + flake.radius;
+             } else if (flake.x > snowCanvas.width + flake.radius) {
+                 flake.x = -flake.radius;
+             }
+        }
+
+        requestAnimationFrame(drawFlakes); // Continuar la animación
+    }
+
+    // Ajustar canvas al tamaño de la ventana
+    function resizeCanvas() {
+        if (!snowCanvas) return;
+        // Ajustar el tamaño del canvas
+        snowCanvas.width = window.innerWidth;
+        snowCanvas.height = window.innerHeight;
+        // Reiniciar la posición de los copos para el nuevo tamaño
+        initFlakes(); // Llama a initFlakes sin pasar el número, usa la variable flakeCount
+    }
+
+    // Evento para redimensionar el canvas
+    window.addEventListener("resize", resizeCanvas);
 
     // --- Inicialización ---
-    resetApp(); // Asegurarse de que la app inicie en estado limpio
+    // Inicializar el canvas y la animación de nieve
+    resizeCanvas(); // Configura el tamaño inicial y crea los copos
+    drawFlakes(); // Comienza el bucle de animación
 
+    // Inicializar el estado de la aplicación principal
+    resetApp(); // Establecer el estado inicial de la UI
 });
 
-// // importamos las librerias necesarias.
-// import {removeBackground} from '@imgly/background-removal-node'; // biblioteca importada.
-// import fs from 'fs'; // modulo fs que nos permite leer archivos.
-// import path from 'path'; // modulo path que nos permite leer la ruta de un archivo.
-
-// // se definen las rutas de los archivos de entrada y salida.
-// const inputPath = "./logogijam.png";
-// const outputPath = "./output-logoremove.png";
-
-// // se valida si el archivo de entrada existe.
-// if (!fs.existsSync(inputPath)) {
-//     console.error(`Imput file not found ${inputPath}`);
-//     process.exit(1);
-// };
-
-// // se crea una variable que contendra la ruta absoluta de la imagen.
-// const absolutePath = path.resolve(inputPath); // el modulo path nos permite obtener la ruta absoluta de un archivo o convertir la ruta relativa a absoluta.
-// const imageUrl = `file://${absolutePath}` // se crea una variable que contendra la ruta absoluta de la imagen.
-
-// // se crea una funcion asincrona que convierte un blob a un buffer.
-// async function blobToBuffer(blob) {
-//     const arrayBuffer = await blob.arrayBuffer()
-//     return Buffer.from(arrayBuffer)
-// };
-
-// // se remueve el fondo de la imagen y se guarda en la ruta especificada.
-// removeBackground(imageUrl)
-//     .then(async blob => {
-//         console.log("Background removed successfully");
-//         const buffer = await blobToBuffer(blob)
-//         fs.writeFileSync(outputPath, buffer); // se escribe el archivo en la ruta especificada.
-//     })
-//     .catch(error => {
-//         console.error(error);
-//     });
+// Eliminado el segundo document.addEventListener("DOMContentLoaded")
+// Eliminado el stray drawFlakes() al final del script

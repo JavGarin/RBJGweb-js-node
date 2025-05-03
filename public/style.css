@@ -1,381 +1,361 @@
-/* --- Steampunk Theme --- */
-
-/* Variables de Color (opcional, pero útil) */
 :root {
-  --color-background: #f5eadd; /* Pergamino claro / Beige antiguo */
-  --color-container-bg: #6a5a4f; /* Madera oscura / Metal envejecido */
-  --color-text: #3d2c1f; /* Marrón muy oscuro */
-  --color-heading: #a0522d; /* Siena / Marrón rojizo */
-  --color-brass: #b8860b; /* Latón oscuro */
-  --color-copper: #b87333; /* Cobre */
-  --color-border: #8b4513; /* Marrón silla de montar (para bordes) */
-  --color-accent-dark: #5a3d2b; /* Marrón más oscuro para sombras/detalles */
-  --font-heading: 'Cinzel', serif;
-  --font-body: 'EB Garamond', serif;
+  --font-base: 'Roboto', sans-serif; /* Fuente moderna y legible */
+  --font-cinzel: 'Cinzel', serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 600;
+
+  /* Paleta pastel invierno/bosque */
+  --bg-gradient-start: #E3F2FD; /* azul muy claro */
+  --bg-gradient-end:   #F1F8E9; /* verde pálido */
+  --card-bg:           rgba(255, 255, 255, 0.75); /* blanco semitransparente */
+  --text-primary:      #2E3A46; /* gris azulado oscuro */
+  --text-secondary:    #4F5B66; /* gris medio */
+  --accent:            #81C784; /* verde pastel */
+  --accent-hover:      #66BB6A; /* verde pastel un poco más oscuro para hover */
+  --button-bg:         #FFFFFF; /* blanco puro */
+  --button-border:     #B0BEC5; /* gris claro */
+  --button-hover:      #CFD8DC; /* gris perla */
+  --button-text:       var(--text-primary); /* Variable explícita para el color del texto del botón por defecto */
+  --button-secondary-hover-border: #90A4AE; /* Borde un poco más oscuro para secondary hover */
+
+
+  /* Colores para mensajes */
+  --success-bg: #E8F5E9;
+  --success-text: #2E7D32;
+  --error-bg: #FFEBEE;
+  --error-text: #C62828;
+
+  --main-padding: 1rem; /* Variable para el padding del main-container */
 }
 
-/* Estilos Generales */
-body {
-  font-family: var(--font-body);
-  background-color: var(--color-background);
-  /* Efecto sutil de textura de papel viejo */
-  background-image: linear-gradient(rgba(210, 180, 140, 0.1) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(210, 180, 140, 0.1) 1px, transparent 1px);
-  background-size: 20px 20px; /* Tamaño del patrón de rejilla sutil */
-  color: var(--color-text);
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
-  margin: 0;
-  padding: 20px;
+/* Clase para ocultar elementos */
+.hidden {
+  display: none !important;
+}
+
+/* 3) Reset mínimo y base */
+* {
   box-sizing: border-box;
-  font-size: 17px; /* Un poco más grande para Garamond */
+  margin: 0;
+  padding: 0;
 }
 
-.container {
-  background-color: var(--color-container-bg);
-  /* Gradiente sutil para simular metal/madera */
-  background-image: linear-gradient(rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.1));
-  padding: 35px 45px;
-  border-radius: 8px; /* Bordes menos redondeados */
-  border: 3px solid var(--color-border);
-  border-style: outset; /* Efecto de borde biselado */
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4), /* Sombra principal más oscura */
-              inset 0 0 15px rgba(0, 0, 0, 0.3); /* Sombra interior */
-  max-width: 750px;
-  width: 100%;
-  text-align: center;
-  transition: all 0.3s ease;
-  color: var(--color-background); /* Texto claro sobre fondo oscuro */
-}
-
-header h1 {
-  font-family: var(--font-heading);
-  color: var(--color-brass); /* Título en latón */
-  font-weight: 700;
-  margin-bottom: 15px;
-  text-shadow: 1px 1px 3px var(--color-accent-dark);
-  letter-spacing: 1px;
-}
-
-header p {
-  color: #dcdcdc; /* Gris claro para subtítulo */
-  margin-bottom: 35px;
-  font-size: 1.2em;
-  font-style: italic;
-}
-
-/* --- Área de Carga --- */
-.upload-area {
-  margin-bottom: 35px;
-}
-
-.drop-zone {
-  border: 3px dashed var(--color-copper); /* Borde cobre punteado */
-  border-radius: 6px;
-  padding: 40px 20px;
-  cursor: pointer;
-  transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-  background-color: rgba(0, 0, 0, 0.1); /* Fondo ligeramente oscuro */
-}
-
-.drop-zone.dragover {
-  border-color: var(--color-brass);
-  border-style: solid;
-  background-color: rgba(0, 0, 0, 0.2);
-  box-shadow: 0 0 15px var(--color-brass); /* Resplandor latón */
-}
-
-.upload-icon i.fas { /* Asegurarse de que aplica a los iconos Font Awesome */
-  font-size: 4.5em;
-  color: var(--color-copper); /* Icono en cobre */
-  margin-bottom: 15px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.drop-zone p {
-  margin: 12px 0;
-  color: #e0e0e0; /* Texto claro */
-}
-
-.formats-info {
-  font-size: 0.95em;
-  color: var(--color-brass); /* Información en latón */
-  margin-top: 15px;
-  font-weight: 500;
-}
-
-/* --- Botones --- */
 .btn {
-  font-family: var(--font-heading); /* Fuente de título para botones */
-  font-weight: 400;
-  letter-spacing: 0.5px;
-  color: var(--color-background); /* Texto claro */
-  border: 2px solid var(--color-border);
-  border-style: outset;
-  padding: 12px 28px;
-  border-radius: 4px; /* Bordes más definidos */
+  font-family: var(--font-base);
+  font-size: 1rem;
+  font-weight: var(--font-weight-medium); /* Reduje un poco el peso para más legibilidad */
+  background: var(--button-bg);
+  border: 1px solid var(--button-border);
+  border-radius: 6px; /* Bordes un poco menos redondeados para un estilo más moderno */
+  padding: 0.7rem 1.4rem; /* Ajuste del padding para que coincida con el nuevo border-radius */
+  color: var(--button-text); /* Usar la variable de color de texto */
   cursor: pointer;
-  font-size: 1.05em;
-  transition: all 0.2s ease;
-  margin: 8px;
+  /* Mejorar la transición para incluir transformaciones y sombras */
+  transition: background 0.2s ease-in-out,
+              border-color 0.2s ease-in-out,
+              color 0.2s ease-in-out,
+              transform 0.2s ease-in-out,
+              box-shadow 0.2s ease-in-out;
+  margin: 0.5rem 0.25rem;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  position: relative; /* Para pseudo-elementos si se necesitan */
-  overflow: hidden; /* Para efectos */
+  gap: 0.5rem;
+  text-decoration: none;
+  /* Añadir una sombra sutil por defecto */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08); /* Sombra más sutil */
+  outline: none; /* Eliminar el outline por defecto */
 }
 
-.btn i.fas { /* Color de iconos en botones */
-  color: var(--color-brass);
-  font-size: 1.1em;
-}
-
-/* Botón normal/seleccionar archivo */
-.btn {
-  background-color: var(--color-copper); /* Fondo cobre */
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
-}
 .btn:hover {
-  background-color: #a0662d; /* Cobre más oscuro */
-  border-color: #a0522d;
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4), 0 0 10px var(--color-copper); /* Resplandor */
-  transform: translateY(-1px); /* Ligero levantamiento */
+  background: #E0E0E0; /* Gris más claro para el hover */
+  border-color: var(--button-border); /* Mantener o cambiar sutilmente el borde en hover */
+  color: var(--text-primary); /* Mantener el color del texto */
+  transform: translateY(-1px); /* Menos elevación */
+  /* Añadir una sombra más pronunciada en hover */
+  box-shadow: 0 3px 7px rgba(0,0,0,0.1); /* Sombra ligeramente más pronunciada */
 }
 
-/* Botón Primario (Quitar Fondo) */
+/* Estado Focus (para accesibilidad con teclado) */
+.btn:focus {
+  outline: 2px solid var(--accent); /* Un outline con el color de acento */
+  outline-offset: 2px; /* Separar el outline del borde del botón */
+}
+
+/* Estado Active (cuando se presiona) */
+.btn:active {
+  transform: translateY(0); /* Vuelve a la posición normal */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06); /* Sombra más pequeña para dar efecto "presionado" */
+  /* Opcional: background más oscuro o borde inset */
+  /* background: darken(var(--button-hover), 5%); */
+}
+
+/* Estado Disabled */
+.btn:disabled {
+  opacity: 0.5; /* Reducir opacidad para indicar que está deshabilitado */
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+
+/* Variantes */
+/* Botón Primario (color de acento) */
 .btn.primary {
-  background-color: var(--color-brass); /* Latón */
-  border-color: #a0740a;
+  background: var(--accent);
+  color: white; /* Texto blanco para contraste con el color de acento */
+  border-color: var(--accent);
+  box-shadow: 0 2px 4px rgba(0, 128, 0, 0.15); /* Sombra con un tinte del color de acento */
 }
 .btn.primary:hover {
-  background-color: #caa632; /* Latón más brillante */
-  border-color: #b8860b;
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4), 0 0 12px var(--color-brass);
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: white;
+  transform: translateY(-2px); /* Efecto de elevación un poco más pronunciado */
+  box-shadow: 0 4px 8px rgba(0, 128, 0, 0.25); /* Sombra más grande y pronunciada */
 }
-.btn.primary i.fas {
-  color: #fff; /* Icono blanco en botón primario */
-}
-
-/* Botón Secundario (Descargar, Nueva Imagen) */
-.btn.secondary {
-  background-color: var(--color-accent-dark); /* Marrón oscuro */
-  border-color: #4a3c31;
-}
-.btn.secondary:hover {
-  background-color: #7c6453;
-  border-color: #5a3d2b;
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5), 0 0 8px var(--color-accent-dark);
-}
-
-.btn:active {
-  transform: translateY(1px); /* Efecto de presionado */
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
-}
-
-.btn:disabled {
-  background-color: #888; /* Gris metalizado opaco */
-  border-color: #666;
-  color: #bbb;
-  cursor: not-allowed;
-  opacity: 0.6;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.4);
-  text-shadow: none;
-}
-.btn:disabled i.fas {
-  color: #bbb;
-}
-
-
-/* --- Área de Previsualización --- */
-.preview-area {
-  margin-top: 35px;
-}
-
-.image-container {
-  margin-bottom: 30px;
-  position: relative;
-  background-color: rgba(0, 0, 0, 0.2); /* Fondo oscuro semitransparente */
-  /* Patrón sutil de rejilla (como plano) */
-  background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 25px 25px;
-  padding: 15px;
-  border: 2px solid var(--color-border);
-  border-radius: 4px;
-  min-height: 250px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.4);
-}
-
-.image-container img {
-  max-width: 100%;
-  max-height: 450px;
-  display: block;
-  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil a la imagen */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.image-info {
-  font-size: 0.9em;
-  color: var(--color-brass); /* Info en latón */
-  margin-top: 20px;
-  font-style: italic;
-}
-
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 20px; /* Más espacio entre controles */
-  margin-bottom: 25px;
-  padding: 15px;
-  background-color: rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-  border: 1px solid rgba(255,255,255,0.1);
-}
-
-.format-selector {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.format-selector label {
-  color: var(--color-brass); /* Etiqueta en latón */
-  font-weight: 500;
-  font-family: var(--font-heading);
-}
-
-.format-selector select {
-  font-family: var(--font-body);
-  background-color: var(--color-background); /* Fondo pergamino */
-  color: var(--color-text); /* Texto oscuro */
-  border: 2px solid var(--color-border);
-  border-style: inset;
-  border-radius: 4px;
-  padding: 8px 12px;
-  font-size: 0.95em;
-  cursor: pointer;
-  appearance: none; /* Quitar estilo por defecto */
-  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23B8860B%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); /* Flecha color latón */
-  background-repeat: no-repeat;
-  background-position: right 10px top 50%;
-  background-size: 12px auto;
-  padding-right: 30px; /* Espacio para la flecha */
-}
-.format-selector select:focus {
-  outline: 2px solid var(--color-brass);
+.btn.primary:focus {
+  outline: 2px solid white; /* Outline blanco para destacar sobre el color primario */
   outline-offset: 2px;
 }
+.btn.primary:active {
+  transform: translateY(-1px); /* Pequeño "hundimiento" al presionar */
+  box-shadow: 0 2px 3px rgba(0, 128, 0, 0.15); /* Sombra reducida */
+}
+.btn.primary:disabled {
+ /* Mantener estilos disabled generales */
+ box-shadow: none;
+}
 
-/* --- Indicador de Carga --- */
-.loading {
+
+/* Botón Secundario (estilo por defecto, pero explícito) */
+.btn.secondary {
+  background: var(--button-bg);
+  border-color: var(--button-border);
+  color: var(--button-text);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08); /* Sombra por defecto */
+}
+.btn.secondary:hover {
+  background: var(--button-hover);
+  border-color: var(--button-secondary-hover-border); /* Borde ligeramente más oscuro en hover */
+  color: var(--button-text);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 7px rgba(0,0,0,0.1);
+}
+.btn.secondary:focus {
+  outline: 2px solid var(--accent); /* Usar color de acento para el outline de focus */
+  outline-offset: 2px;
+}
+.btn.secondary:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+.btn.secondary:disabled {
+ /* Mantener estilos disabled generales */
+ box-shadow: none;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  /* OCULTAR SCROLLBARS GLOBALES */
+  overflow: hidden;
+}
+
+/* Estilo para el canvas de la nieve */
+#snow-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0; /* Asegura que el fondo esté detrás del contenido */
+  pointer-events: none; /* Permite hacer clic a través del canvas */
+}
+
+body {
+  font-family: var(--font-base);
+  /* Aplicar el gradiente de fondo al body principal */
+  background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--main-padding); /* Usar variable de padding */
+  position: relative;
+  /* overflow: hidden; /* Moved to html/body */
+}
+
+/* 5) Contenedor principal */
+.main-container {
+  position: relative;
+  z-index: 1; /* sobre el canvas */
+  background: var(--card-bg);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  padding: 2rem;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+
+  /* --- Flexbox para layout Vertical sin scroll --- */
+  display: flex;
+  flex-direction: column; /* Apilar elementos verticalmente */
+  height: 100%; /* Intentar ocupar toda la altura disponible */
+  max-height: calc(100vh - (var(--main-padding) * 2)); /* Limitar a la altura del viewport menos el padding del body */
+  /* Asegurar que el contenido interno no cause scroll en el main-container */
+  overflow-y: hidden; /* Ocultar cualquier overflow vertical dentro del contenedor */
+}
+
+/* Los hijos directos de .main-container ahora son flex items */
+
+/* 6) Encabezado */
+header {
+  flex-shrink: 0; /* Evitar que el header se encoja */
+  margin-bottom: 1.5rem;
+}
+header h1 {
+  font-family: var(--font-cinzel), var(--font-base);
+  font-size: 1.8rem;
+  font-weight: var(--font-weight-bold);
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+header p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 0; /* Ajuste para layout flex */
+}
+
+/* 7) Área de carga (upload-box) y Vista previa (preview-area) */
+/* Estos son siblings directos dentro de main-container, solo uno visible */
+/* Deben poder expandirse para llenar el espacio o encogerse si es necesario */
+.upload-box,
+.preview-area {
+  flex-grow: 1; /* Permitir que la sección visible crezca para ocupar el espacio restante */
+  flex-shrink: 1; /* Permitir que se encoja si no hay suficiente espacio */
+  /* Usar flexbox interno para alinear el contenido */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Centrar contenido verticalmente si hay espacio extra */
+  width: 100%; /* Asegurar que ocupan todo el ancho disponible */
+  /* Añadir overflow hidden para que su contenido interno no cause scroll */
+  overflow: hidden;
+  /* margin-top: 1.5rem; /* Este margen se puede manejar con gap o margin-bottom en el header */
+  margin-top: 0; /* Eliminar margen superior si el header tiene margin-bottom */
+  margin-bottom: 1rem; /* Espacio entre esta sección y los mensajes/loading */
+}
+
+
+/* Estilos específicos para el área de carga */
+.drop-area {
+  background: rgba(255,255,255,0.5);
+  border: 2px dashed var(--button-border);
+  border-radius: 10px;
+  padding: 2rem;
+  transition: background 0.3s, border-color 0.3s;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 30px;
-  /* Fondo semi-transparente para superponer */
-  /* background-color: rgba(40, 30, 20, 0.8); */
-  border-radius: 8px;
-  margin-top: 20px;
-  transition: opacity 0.3s ease;
-}
-
-.spinner {
-  border: 5px solid rgba(184, 134, 11, 0.3); /* Latón transparente */
-  border-top: 5px solid var(--color-brass); /* Latón sólido */
-  border-radius: 50%;
-  width: 50px; /* Más grande */
-  height: 50px;
-  animation: spin 1.2s linear infinite;
-  margin-bottom: 20px;
-  box-shadow: 0 0 10px rgba(184, 134, 11, 0.5); /* Resplandor latón */
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.loading p {
-  margin: 5px 0 0;
-  color: var(--color-brass); /* Texto latón */
-  font-weight: 500;
-  font-size: 1.1em;
-  font-family: var(--font-heading);
-}
-
-.loading .loading-info {
-  font-size: 0.9em;
-  color: #ccc; /* Gris claro */
-  font-family: var(--font-body);
-  font-style: italic;
-}
-
-/* --- Mensajes de Éxito y Error --- */
-.message {
-  padding: 18px 25px;
-  border-radius: 6px;
-  margin-top: 25px;
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  border: 2px solid; /* Borde definido abajo */
-  border-style: double; /* Borde doble */
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3), inset 0 0 8px rgba(0,0,0,0.2);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  position: relative;
-  color: var(--color-text); /* Texto oscuro por defecto */
-  font-family: var(--font-body);
-}
-
-.message-icon i.fas {
-  font-size: 2em;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
-}
-
-.message p {
-  margin: 0;
-  flex-grow: 1;
-  text-align: left;
-  font-size: 1.05em;
-}
-
-.btn-close {
-  background: none;
-  border: none;
-  font-size: 1.8em;
-  color: inherit; /* Hereda color (cobre/latón abajo) */
   cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
-  padding: 0 8px;
-  font-weight: bold;
-  line-height: 1; /* Alinear mejor la X */
+  flex-grow: 1; /* Hacer que el drop-area ocupe el espacio dentro de upload-box */
+  width: 100%; /* Asegurar que ocupa todo el ancho */
+  /* Asegurar que el contenido interno no cause overflow */
+  overflow: hidden;
 }
-.btn-close:hover {
-  opacity: 1;
+.drop-area.dragover {
+  background: rgba(255,255,255,0.8);
+  border-color: var(--accent);
+}
+.drop-area i { margin-bottom: 0.5rem; }
+.drop-area p { margin-bottom: 1rem; }
+.drop-area small { font-size: 0.8rem; color: var(--text-secondary); }
+
+
+.image-preview {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* --- Controlar la altura de la vista previa de la imagen --- */
+  flex-grow: 1; /* Permite que esta área crezca para ocupar el espacio */
+  flex-shrink: 1; /* Permite que se encoja si es necesario */
+  overflow: hidden; /* Ocultar partes de la imagen si es demasiado grande para el espacio disponible */
+  /* min-height: 100px; /* Puede ser útil tener una altura mínima, pero flex-grow 1 es mejor */
+  margin-bottom: 1rem; /* Espacio debajo de la imagen */
+  width: 100%; /* Asegurar que ocupa el ancho completo para centrar la imagen */
 }
 
-.success-message {
-  background-color: #d4eedc; /* Fondo verde pálido (pergamino verdoso) */
-  border-color: #5b8d5a; /* Verde oscuro musgo */
-  color: #2e4d2e;
+.preview-area img {
+  /* La imagen se escalará dentro del contenedor image-preview flexible */
+  max-width: 100%; /* Asegurar que la imagen no sea más ancha que su contenedor */
+  max-height: 100%; /* Asegurar que la imagen no sea más alta que su contenedor flexible */
+  height: auto; /* Mantener la relación de aspecto */
+  width: auto; /* Mantener la relación de aspecto */
+  object-fit: contain; /* Escalar la imagen para que quepa en el contenedor manteniendo su aspecto */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
-.success-message .message-icon i.fas { color: #5b8d5a; }
-.success-message .btn-close { color: #5b8d5a; }
 
-.error-message {
-  background-color: #f8d8da; /* Fondo rojo pálido (pergamino rojizo) */
-  border-color: #8b0000; /* Rojo oscuro (maroon) */
-  color: #5a1a1f;
+/* Info text */
+.image-info {
+  flex-shrink: 0; /* Evitar que se encoja */
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
 }
-.error-message .message-icon i.fas { color: #8b0000; }
-.error-message .btn-close { color: #8b0000; }
+
+/* Controls */
+.controls {
+  flex-shrink: 0; /* Evitar que los controles se encojan */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0; /* Ajuste para layout flex */
+  margin-bottom: 0; /* Ajuste para layout flex */
+}
+.controls select,
+.controls .btn {
+   flex-shrink: 0; /* Evitar que los controles individuales se encojan */
+}
+
+/* Loading y Mensajes */
+/* Estos también son hijos directos de main-container */
+.loading,
+.message {
+   flex-shrink: 0; /* Evitar que se encojan */
+   margin-top: auto; /* Empujar los mensajes al final si hay espacio */
+   /* Añadir un margen superior explícito si el margin-top: auto es inconsistente */
+   /* margin-top: 1rem; */
+   /* ... otros estilos */
+}
+
+
+/* 11) Responsive */
+@media (max-width: 600px) {
+  .main-container {
+      padding: 1.5rem;
+      /* Ajustar el cálculo de la altura máxima para el nuevo padding */
+      max-height: calc(100vh - (1.5rem * 2));
+  }
+  header h1 { font-size: 1.5rem; }
+  .drop-area { padding: 1.5rem; }
+
+  /* Controls stack vertically on mobile */
+  .controls {
+      flex-direction: column;
+      gap: 0.5rem;
+  }
+   .controls .btn,
+    .controls select {
+        width: 100%; /* Full width on mobile */
+        margin-left: 0;
+        margin-right: 0;
+        flex-shrink: 0;
+   }
+}
