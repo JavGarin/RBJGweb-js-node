@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: background-remover
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    env: node
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    # Si usas PostgreSQL:
+    # database:
+    #   name: bg_remover_db
+    #   plan: free
