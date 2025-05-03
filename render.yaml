@@ -10,7 +10,8 @@ services:
         value: production
       - key: PORT
         value: 10000
-    # Si usas PostgreSQL:
-    # database:
-    #   name: bg_remover_db
-    #   plan: free
+      # Variables específicas para sharp y onnxruntime (si las necesitas)
+      - key: SHARP_IGNORE_GLOBAL_LIBVIPS
+        value: "true"  # Evita conflictos con libvips en Render
+      - key: NODE_VERSION
+        value: "18"    # Usa una versión LTS de Node.js (ej: 18.x)
