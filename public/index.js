@@ -182,7 +182,8 @@ document.querySelectorAll('.btn').forEach(btn => {
 
         try {
             // Usar la ruta relativa a tu servidor local o al path de tu API en el deploy
-            const response = await fetch('/api/remove-background', {
+            const response = await fetch('https://rbjgweb-js-node.onrender.com/api/remove-background', {
+
                 method: 'POST',
                 body: formData,
                 // headers: { 'Content-Type': '...' } - No es necesario con FormData, el navegador lo pone

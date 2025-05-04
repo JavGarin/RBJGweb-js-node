@@ -14,7 +14,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000; // Usar puerto de entorno para el deploy
-const UPLOAD_DIR = path.join(__dirname, 'uploads'); // Directorio para archivos temporales
+const UPLOAD_DIR = '/tmp/uploads'; // Directorio para archivos temporales
 
 // Crear directorio de subidas si no existe al iniciar el servidor
 // Usamos un IIFE (Immediately Invoked Function Expression) async para esto
