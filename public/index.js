@@ -183,10 +183,9 @@ document.querySelectorAll('.btn').forEach(btn => {
         try {
             // Usar la ruta relativa a tu servidor local o al path de tu API en el deploy
             const response = await fetch('https://rbjgweb-js-node.onrender.com/api/remove-background', {
-
                 method: 'POST',
                 body: formData,
-                // headers: { 'Content-Type': '...' } - No es necesario con FormData, el navegador lo pone
+            
             });
 
             if (!response.ok) {
@@ -282,12 +281,11 @@ document.querySelectorAll('.btn').forEach(btn => {
         });
         // Eliminar este listener si no quieres que todo el drop area sea clickeable
         // Si lo mantienes, asegúrate de que no interfiera con selectBtn
-         dropArea.addEventListener('click', e => {
-             // Solo abrir el selector de archivo si el click NO fue en el botón "Seleccionar archivo"
-             if (selectBtn && !selectBtn.contains(e.target)) {
-                 fileInput?.click(); // Usar optional chaining
-             }
-         });
+        dropArea.addEventListener('click', e => {
+            if (e.target !== selectBtn) {
+                fileInput?.click();
+            }
+        });
     }
 
 
