@@ -1,17 +1,12 @@
 services:
   - type: web
-    name: background-remover
+    name: background-remover-easy
     runtime: node
-    buildCommand: npm install
+    buildCommand: npm install && npm run build
     startCommand: npm start
     env: node
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 10000
-      # Variables específicas para sharp y onnxruntime (si las necesitas)
-      - key: SHARP_IGNORE_GLOBAL_LIBVIPS
-        value: "true"  # Evita conflictos con libvips en Render
-      - key: NODE_VERSION
-        value: "18"    # Usa una versión LTS de Node.js (ej: 18.x)
+    staticAssets:
+      - path: /public
