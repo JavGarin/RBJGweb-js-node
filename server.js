@@ -92,7 +92,8 @@ const handleUpload = (req, res, next) => {
 // --- Rutas de la API ---
 
 // Ruta para quitar el fondo de la imagen
-app.post('/api/remove-background', upload.single('image'), async (req, res) => {
+app.post('/api/remove-background', handleUpload, async (req, res) => {
+
     let imagePath = null; // Variable para almacenar la ruta del archivo temporal
     try {
         // handleUpload ya verificó si hay archivo y errores de multer/filefilter
