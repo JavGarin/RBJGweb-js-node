@@ -8,6 +8,9 @@ import fs from 'fs/promises'; // Usar fs.promises para async/await
 import { fileURLToPath, pathToFileURL } from 'url';
 import { removeBackground } from '@imgly/background-removal-node';
 
+app.use(express.json({ limit: '5mb' }));
+app.use(express.urlencoded({ limit: '5mb', extended: true }));
+
 // Configuración de paths para ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -182,6 +185,9 @@ app.get('*', (req, res) => {
     // Asegurarse de que la ruta al index.html es correcta dentro de la carpeta 'public'
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+// Aumentar timeout a 2 minutos
+server.timeout = 120000;
 
 // --- Inicio del Servidor ---
 const server = app.listen(PORT, () => {
