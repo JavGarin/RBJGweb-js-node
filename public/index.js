@@ -19,15 +19,51 @@ const errorCloseBtn = document.getElementById('errorCloseBtn');
 let uploadedImage = null;
 let processedImageBlob = null;
 
-// Eventos de carga de archivo
+// Botón de selección
 selectBtn.addEventListener('click', () => fileInput.click());
 
+// Función para redimensionar imagen
+function resizeImage(file, maxWidth = 1024, maxHeight = 1024) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      img.onload = () => {
+        let { width, height } = img;
+
+        if (width > maxWidth || height > maxHeight) {
+          const scale = Math.min(maxWidth / width, maxHeight / height);
+          width *= scale;
+          height *= scale;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error("No se pudo redimensionar la imagen."));
+        }, file.type);
+      };
+      img.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+// Evento de carga por input
 fileInput.addEventListener('change', () => {
   if (fileInput.files.length > 0) {
     handleImage(fileInput.files[0]);
   }
 });
 
+// Eventos de arrastrar y soltar
 dropArea.addEventListener('dragover', e => {
   e.preventDefault();
   dropArea.classList.add('highlight');
@@ -44,6 +80,7 @@ dropArea.addEventListener('drop', e => {
   if (file) handleImage(file);
 });
 
+// Función para manejar imagen seleccionada
 function handleImage(file) {
   if (!file.type.startsWith('image/')) {
     showError('El archivo no es una imagen válida.');
@@ -67,21 +104,23 @@ function handleImage(file) {
 
 // Quitar fondo
 removeBgBtn.addEventListener('click', async () => {
-  if (!uploadedImage) return;
-
-  const formData = new FormData();
-  formData.append('image', uploadedImage);
-
-  const format = formatSelect.value;
+  if (!uploadedImage) {
+    showError('Primero debes subir una imagen.');
+    return;
+  }
 
   try {
     showLoading();
+    const resizedBlob = await resizeImage(uploadedImage);
+    const formData = new FormData();
+    formData.append('image', resizedBlob, uploadedImage.name);
+
     const response = await fetch('/api/remove-background', {
       method: 'POST',
       body: formData
     });
 
-    if (!response.ok) throw new Error('Error al procesar la imagen');
+    if (!response.ok) throw new Error('Error al procesar la imagen.');
 
     const blob = await response.blob();
     processedImageBlob = blob;
@@ -121,7 +160,7 @@ resetBtn.addEventListener('click', () => {
   fileInput.value = '';
 });
 
-// Mensajes de éxito y error
+// Mensajes
 successCloseBtn.addEventListener('click', () => successMessage.classList.add('hidden'));
 errorCloseBtn.addEventListener('click', () => errorMessage.classList.add('hidden'));
 
