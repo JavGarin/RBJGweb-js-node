@@ -8,6 +8,8 @@ import fs from 'fs/promises'; // Usar fs.promises para async/await
 import { fileURLToPath, pathToFileURL } from 'url';
 import { removeBackground } from '@imgly/background-removal-node';
 
+const app = express();
+
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ limit: '5mb', extended: true }));
 
@@ -15,7 +17,7 @@ app.use(express.urlencoded({ limit: '5mb', extended: true }));
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
+
 const PORT = process.env.PORT || 3000; // Usar puerto de entorno para el deploy
 const UPLOAD_DIR = '/tmp/uploads'; // Directorio para archivos temporales
 
@@ -187,12 +189,11 @@ app.get('*', (req, res) => {
 });
 
 // Aumentar timeout a 2 minutos
-server.timeout = 120000;
+// server.timeout = 120000;
 
 // --- Inicio del Servidor ---
 const server = app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
-    console.log('Presiona CTRL+C para detenerlo');
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
 
 // Manejar errores al iniciar el servidor, como puerto ya en uso
